@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   NativeEventEmitter,
   NativeModules,
+  PermissionsAndroid,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -17,29 +18,59 @@ import {
 // ---- Gemini API Key ----
 const GEMINI_KEY = process.env.GEMINI_API_KEY || "";
 
+// ---- Native Speech Module Type ----
 type SpeechModuleType = {
   startListening: () => void;
   stopListening: () => void;
 };
 
-const { SpeechModule } = NativeModules as { SpeechModule: SpeechModuleType };
+// Use "any" at runtime but keep a TS shape
+const speechModule: SpeechModuleType | undefined =
+  (NativeModules as any).SpeechModule;
 
+console.log("🔧 NativeModules.SpeechModule =", speechModule);
+
+// ---- Helper: Request microphone permission (runtime) ----
+async function requestMicPermission(): Promise<boolean> {
+  if (Platform.OS !== "android") return true;
+
+  try {
+    const result = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      {
+        title: "Microphone Permission",
+        message: "TriSense needs microphone access for speech recognition.",
+        buttonPositive: "Allow",
+        buttonNegative: "Deny",
+      }
+    );
+
+    console.log("🎤 Mic permission result:", result);
+
+    return result === PermissionsAndroid.RESULTS.GRANTED;
+  } catch (err) {
+    console.error("❌ Mic permission error:", err);
+    return false;
+  }
+}
+
+// ---- Gemini Call ----
 async function askGemini(prompt: string): Promise<string> {
-
   const systemInstruction = `
-  You are TriSense — a disability‑assistive AI.
-  When responding to deaf/hard‑of‑hearing users:
-  - Provide clear short sentences
-  - Avoid complex words unless needed
-  - Offer visual‑friendly explanations
-  - Provide actionable steps instead of long paragraphs
-  - Use bullet points where helpful
-  - If user asks about sound / music / alerts, describe them visually
-  `;
+You are TriSense — a disability‑assistive AI.
+When responding to deaf/hard‑of‑hearing users:
+- Provide clear short sentences
+- Avoid complex words unless needed
+- Offer visual‑friendly explanations
+- Provide actionable steps instead of long paragraphs
+- Use bullet points where helpful
+- If user asks about sound / music / alerts, describe them visually
+`;
 
   const finalPrompt = `${systemInstruction}\nUser: ${prompt}`;
 
   try {
+    console.log("🌐 Sending to Gemini:", finalPrompt.slice(0, 200) + "...");
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
       {
@@ -51,11 +82,14 @@ async function askGemini(prompt: string): Promise<string> {
       }
     );
 
+    console.log("🌐 Gemini status:", res.status);
     const data = await res.json();
     console.log("🔍 GEMINI RESPONSE =>", JSON.stringify(data, null, 2));
 
-    return data?.candidates?.[0]?.content?.parts?.[0]?.text
-      || "I couldn't generate a response.";
+    return (
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "I couldn't generate a response."
+    );
   } catch (e) {
     console.warn("Gemini error", e);
     return "Problem communicating with AI.";
@@ -78,35 +112,56 @@ export default function App() {
 
   // hook Android speech events
   useEffect(() => {
-    if (Platform.OS !== "android") return;
+    console.log("📱 Platform:", Platform.OS);
+    if (Platform.OS !== "android") {
+      console.warn("⚠️ Not Android – native STT disabled");
+      return;
+    }
 
-    const emitter = new NativeEventEmitter(NativeModules.SpeechModule);
-    const subResult = emitter.addListener("speechResult", async (text: string) => {
-      setIsListening(false);
-      setPartial("");
-      addMsg("You: " + text);
+    if (!speechModule) {
+      console.error("❌ SpeechModule is undefined in NativeModules");
+      return;
+    }
 
-      setStatusMsg("Thinking…");
-      const reply = await askGemini(text);
-      addMsg("AI: " + reply);
-      setStatusMsg(null);
-    });
+    console.log("✅ Initializing NativeEventEmitter for SpeechModule");
+    const emitter = new NativeEventEmitter(speechModule as any);
+
+    const subResult = emitter.addListener(
+      "speechResult",
+      async (text: string) => {
+        console.log("✅ speechResult event:", text);
+        setIsListening(false);
+        setPartial("");
+        addMsg("You: " + text);
+
+        setStatusMsg("Thinking…");
+        const reply = await askGemini(text);
+        addMsg("AI: " + reply);
+        setStatusMsg(null);
+      }
+    );
 
     const subPartial = emitter.addListener(
       "speechPartial",
-      (text: string) => setPartial(text)
+      (text: string) => {
+        console.log("🟡 speechPartial event:", text);
+        setPartial(text);
+      }
     );
 
     const subState = emitter.addListener("speechState", (s: string) => {
+      console.log("ℹ️ speechState event:", s);
       setStatusMsg(s);
     });
 
     const subError = emitter.addListener("speechError", (msg: string) => {
+      console.error("❌ speechError event:", msg);
       setIsListening(false);
-      
+      setStatusMsg(msg);
     });
 
     return () => {
+      console.log("🧹 Cleaning up SpeechModule listeners");
       subResult.remove();
       subPartial.remove();
       subState.remove();
@@ -114,29 +169,56 @@ export default function App() {
     };
   }, []);
 
-  const handleStartListening = () => {
+  const handleStartListening = async () => {
+    console.log("🎤 Mic button pressed");
+
     if (Platform.OS !== "android") {
       alert("Android STT only works on Android.");
       return;
     }
+
+    if (!speechModule) {
+      console.error("❌ SpeechModule is null/undefined on start");
+      alert("Speech module not available. Check native linking/package name.");
+      return;
+    }
+
+    // Runtime permission
+    const hasPermission = await requestMicPermission();
+    if (!hasPermission) {
+      console.warn("🚫 Mic permission denied by user");
+      setStatusMsg("Mic permission denied");
+      return;
+    }
+
     try {
-      SpeechModule.startListening();
+      console.log("▶️ Calling SpeechModule.startListening()");
+      speechModule.startListening();
       setIsListening(true);
       setStatusMsg("Listening…");
     } catch (e) {
-      console.warn("startListening error", e);
+      console.error("❌ startListening error:", e);
       setIsListening(false);
+      setStatusMsg("Mic error");
     }
   };
 
   const handleStopListening = () => {
+    console.log("⏹ Stop button pressed");
+
     if (Platform.OS !== "android") return;
+    if (!speechModule) {
+      console.error("❌ SpeechModule is null/undefined on stop");
+      return;
+    }
+
     try {
-      SpeechModule.stopListening();
+      console.log("⏹ Calling SpeechModule.stopListening()");
+      speechModule.stopListening();
       setIsListening(false);
       setStatusMsg("Stopped");
     } catch (e) {
-      console.warn("stopListening error", e);
+      console.error("❌ stopListening error:", e);
     }
   };
 
@@ -350,7 +432,6 @@ const styles = StyleSheet.create({
   },
   titleRow: { flexDirection: "row", alignItems: "center" },
   appName: { fontSize: 20, fontWeight: "700", color: "#FFFFFF", marginLeft: 8 },
-
   chatbotBox: {
     backgroundColor: "#0B1220",
     marginTop: 30,
@@ -366,7 +447,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 40,
   },
-
   sectionText: {
     color: "#A7B2D9",
     fontSize: 16,
