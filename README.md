@@ -1,122 +1,90 @@
-🌐 TriSense – AI‑Powered Accessibility Assistant
-TriSense is an AI‑driven accessibility application designed to empower individuals with visual, hearing, and cognitive disabilities by transforming complex digital information into simple, accessible formats.
+# 🚀 TriSense – AI-Powered Accessibility Assistant
 
-Through intelligent multimodal support—document reading, real‑time speech captioning, task guidance, and content simplification—TriSense reduces barriers that millions face when accessing education, digital content, and everyday information.
+TriSense is an AI-driven accessibility application designed to empower individuals with **visual, hearing, and cognitive disabilities** by converting complex digital information into accessible, easy-to-understand formats.
 
-✨ Features
-👁️ Blind Assistance
-Text‑to‑speech reading for PDFs, documents, and long text
+The platform integrates **three intelligent assistance modules**, powered by **Android Native Speech-to-Text** and **Gemini AI**, delivering real-time accessibility support in education, communication, and daily tasks.
 
-Visual scene description (AI‑powered)
+---
 
-Image understanding for education & navigation
+## ⭐ Features Overview
 
-👂 Hearing Assistance
-Real‑time Speech‑to‑Text using native Android STT (SpeechRecognizer API)
+### 🔵 Blind Assistance
+- Text-to-speech reading for PDFs, images, and documents  
+- Image-to-description AI vision  
+- Scene and object explanation  
 
-Live caption bar
+### 🟢 Hearing Assistance
+- Real-time speech‑to‑text captions  
+- Powered by **Native Android STT** (low latency, offline-capable)  
+- Partial + final transcript streaming  
 
-Audio alerts converted into visual notifications
+### 🟣 Cognitive Assistance
+- Text simplification  
+- Summarization  
+- Task breakdowns / step-by-step guides  
+- Routine & reminder assistance  
+- Powered by **Gemini 2.5 Flash API**  
 
-🧠 Cognitive Assistance
-Simplified explanations for students
+---
 
-Step‑by‑step instructional breakdowns
+## 🎯 Why TriSense?
 
-Task reminders and routine management
+Millions struggle with:
+- Expensive assistive tools  
+- Poor accessibility in digital platforms  
+- Difficult-to-understand text  
+- Lack of real-time audio transcription  
 
-Gemini AI–powered summarization & text clarity improvement
+TriSense creates a **unified accessibility tool**, reducing dependency on multiple apps and delivering:
+- 🔹 Digital independence  
+- 🔹 Better communication  
+- 🔹 Enhanced learning  
+- 🔹 More confidence in navigating daily life  
 
-🤖 AI Chatbot (Gemini 2.5 Flash)
-Clear, concise responses suited for accessibility
+---
 
-Adaptive conversation style for deaf / blind / cognitive‑disabled users
+## 🛠 Tech Stack
 
-Context‑aware assistance
+| Layer | Technology |
+|------|------------|
+| Frontend | React Native + Expo |
+| AI | Gemini 2.5 Flash |
+| Hearing Assistance | Native Android SpeechRecognizer (Kotlin) |
+| Build System | Yarn |
+| Routing | Expo Router |
+| OS Support | Android (iOS coming soon) |
 
-🚀 Tech Stack
-Layer	Technology
-Frontend	React Native (Expo)
-Speech‑to‑Text	Native Android: SpeechRecognizer, Kotlin module
-AI Model	Google Gemini 2.5 Flash
-Routing	Expo Router
-Platform	Android / iOS (iOS STT coming soon)
-📲 Installation & Setup
-1️⃣ Clone the Repository
-git clone https://github.com/yourusername/TriSense.git
-cd TriSense
-2️⃣ Install Dependencies
-npm install
-3️⃣ Add Gemini API Key
-Create .env (or use app.json config):
+---
 
-GEMINI_API_KEY=your_key_here
-4️⃣ Run the App
-npx expo run:android
-NOTE: Native STT works only with a Development Build, not Expo Go.
+## 📦 Installation (Yarn)
 
-🧩 Project Structure
-TriSense/
-│── app/
-│   ├── index.tsx               # AI Chatbot & Main Screen
-│   ├── blind/                  # Blind assistance module
-│   ├── hearing/                # Hearing STT module
-│   ├── cognitive/              # Cognitive assistant
-│
-│── android/
-│   └── SpeechModule.kt         # Native Android STT
-│
-│── components/                 # UI components
-│── assets/                     # Images, icons
-│── README.md
-🔧 Native Speech Module (Android)
-TriSense uses a custom Kotlin module:
+### 1️⃣ Install dependencies
+```bash
+yarn install
 
-SpeechRecognizer
+2️⃣ Start development server
+yarn expo start
 
-Partial transcription support
+3️⃣ Run on Android device or emulator
+yarn expo run:android
 
-Error handling & status events
+🔧 Android Native Module (SpeechModule)
+TriSense includes a custom Kotlin SpeechRecognizer module for:
 
-Real‑time caption streaming
+Partial live transcription
 
-Integrated using:
+Final transcription
 
-NativeModules.SpeechModule.startListening()
-NativeModules.SpeechModule.stopListening()
-🎯 Purpose & Impact
-People with disabilities often cannot access:
+Error codes
 
-Study materials
+Real-time microphone state
 
-Online resources
+Make sure your AndroidManifest.xml contains:
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-Job‑related content
-
-Everyday information
-
-TriSense solves this by providing:
-
-Low‑cost accessibility
-
-AI‑powered understanding
-
-Real‑time communication support
-
-Inclusive digital access
-
-This promotes autonomy, education access, and independent living.
-
-🗺️ Roadmap
- Offline STT
-
- Sign‑language avatar (ISL/ASL)
-
- Cross‑platform iOS STT
-
- Real‑time audio event detection (baby cry, alarms, vehicles)
-
- Image‑to‑Braille Mode
+🔑 Environment Variables
+Create .env in your project root:
+GEMINI_API_KEY=your_api_key_here
 
 🤝 Contributing
 Contributions are welcome!
@@ -124,10 +92,3 @@ Feel free to fork the repo and make a pull request.
 
 📜 License
 MIT License © 2025  Amogh S Y 
-
-🧡 Acknowledgements
-Google Gemini API
-
-Expo & React Native
-
-Android SpeechRecognizer API
