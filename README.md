@@ -1,50 +1,117 @@
-# Welcome to your Expo app 👋
+TriSense – AI‑Powered Accessibility Platform
+TriSense is an AI‑powered accessibility application designed to support individuals with visual, hearing, and cognitive disabilities by converting complex digital information into accessible, easy‑to‑use formats.
+It integrates Gemini AI, native Android Speech‑to‑Text, and custom accessibility modules into one unified platform.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+🚀 Features
+🔵 Blind Assistance
+Text‑to‑speech reading for documents and on‑screen text
 
-## Get started
+Visual description support using AI
 
-1. Install dependencies
+Helps visually impaired users access digital material easily
 
-   ```bash
-   npm install
-   ```
+🟣 Hearing Assistance
+Real‑time speech‑to‑text captions
 
-2. Start the app
+Powered by native Android STT module for fast, offline‑friendly transcription
 
-   ```bash
-   npx expo start
-   ```
+Ideal for deaf or hard‑of‑hearing users
 
-In the output, you'll find options to open the app in a
+🟢 Cognitive Assistance
+Text simplification and summarization
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Routine assistance and reminder generation
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Contextual explanations with Gemini AI
 
-## Get a fresh project
+Helps users with cognitive load or learning difficulties
 
-When you're ready, run:
+💡 Why TriSense?
+People with disabilities often cannot access apps, websites, or educational content due to:
 
-```bash
+Poor accessibility design
+
+Expensive assistive technologies
+
+PDFs and documents that are hard to understand
+
+Lack of real‑time assistive support
+
+TriSense removes these barriers by offering an inclusive, AI‑driven solution that promotes independence, accessibility, and equal digital access for millions.
+
+📱 Tech Stack
+React Native + Expo
+
+Gemini AI (Google Generative Language API)
+
+Custom Native Android Module (SpeechRecognizer API)
+
+File‑based routing (Expo Router)
+
+🔧 Installation
+Install dependencies
+
+npm install
+Start the app
+
+npx expo start
+You can run the project on:
+
+Development Build
+
+Android Emulator
+
+iOS Simulator
+
+Expo Go (limited support)
+
+🛠 Rebuilding Native Android Module (Mandatory for STT)
+Because TriSense uses a custom native SpeechModule, you must build a development client:
+
+npx expo run:android
+Running in Expo Go will NOT work — native modules are not available there.
+
+Ensure android/app/src/main/java/.../SpeechModule.kt exists and is linked properly.
+
+🔐 Environment Setup
+Create .env:
+
+GEMINI_API_KEY=your_gemini_api_key_here
+📁 Project Structure
+app/
+  (tabs)/
+    index.tsx        # Main TriSense UI + Gemini + STT integration
+  speech/
+    SpeechModule.kt  # Native Android STT module
+🧠 AI Instructions (Context Injected)
+TriSense guides AI responses to be:
+
+Simple
+
+Clear
+
+Visual‑friendly
+
+Deaf‑friendly
+
+Actionable
+
+This ensures accessibility across all user categories.
+
+🧪 Reset Project (Optional)
 npm run reset-project
-```
+Creates a clean project structure while keeping example files.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+🌍 Community & Resources
+Expo Documentation: https://docs.expo.dev
 
-## Learn more
+Expo Discord: https://chat.expo.dev
 
-To learn more about developing your project with Expo, look at the following resources:
+Gemini API Docs: https://ai.google.dev
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+🤝 Contributing
+Contributions are welcome!
+Please open an issue or submit a pull request.
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+📜 License
+MIT License © TriSense Developers
