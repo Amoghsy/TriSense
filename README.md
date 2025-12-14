@@ -67,22 +67,25 @@ yarn expo start
 
 3️⃣ Run on Android device or emulator
 yarn expo run:android
+```
 
-🔧 Android Native Module (SpeechModule)
+
+
+## 🔧 Android Native Module (SpeechModule)
 TriSense includes a custom Kotlin SpeechRecognizer module for:
 
-Partial live transcription
+1. Partial live transcription
 
-Final transcription
+2. Final transcription
 
-Error codes
+3. Error codes
 
-Real-time microphone state
+4. Real-time microphone state
 
-Make sure your AndroidManifest.xml contains:
+## Make sure your AndroidManifest.xml contains:
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-🔑 Environment Variables
+## 🔑 Environment Variables
 Create .env in your project root:
 GEMINI_API_KEY=your_api_key_here
 
