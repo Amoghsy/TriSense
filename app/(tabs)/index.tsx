@@ -1,4 +1,5 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   NativeEventEmitter,
@@ -10,13 +11,12 @@ import {
   StatusBar,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 
 // ---- Gemini API Key ----
-const GEMINI_KEY = process.env.GEMINI_API_KEY || "";
+const GEMINI_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 
 // ---- Native Speech Module Type ----
 type SpeechModuleType = {
@@ -72,7 +72,7 @@ When responding to deaf/hard‑of‑hearing users:
   try {
     console.log("🌐 Sending to Gemini:", finalPrompt.slice(0, 200) + "...");
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -97,10 +97,7 @@ When responding to deaf/hard‑of‑hearing users:
 }
 
 export default function App() {
-  // login state
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const router = useRouter();
 
   // chat state
   const [messages, setMessages] = useState<string[]>([]);
@@ -155,9 +152,21 @@ export default function App() {
     });
 
     const subError = emitter.addListener("speechError", (msg: string) => {
-      console.error("❌ speechError event:", msg);
+      console.warn("⚠️ speechError event:", msg);
       setIsListening(false);
-      setStatusMsg(msg);
+
+      // Map Android speech error codes to friendly messages
+      const friendlyMsg = msg.includes("7")
+        ? "No speech detected. Please try again."
+        : msg.includes("6")
+          ? "No speech input. Please try again."
+          : msg.includes("5")
+            ? "Mic error. Check permission."
+            : msg.includes("2")
+              ? "Network error. Check connection."
+              : "Speech error. Please try again.";
+
+      setStatusMsg(friendlyMsg);
     });
 
     return () => {
@@ -222,48 +231,6 @@ export default function App() {
     }
   };
 
-  // ---------- LOGIN SCREEN ----------
-  if (!loggedIn) {
-    return (
-      <SafeAreaView style={styles.loginContainer}>
-        <StatusBar backgroundColor="#04070F" barStyle="light-content" />
-        <Text style={styles.loginTitle}>Welcome to TriSense</Text>
-        <Text style={styles.loginSub}>Accessible AI Assistance for All</Text>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#7a8ba6"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#7a8ba6"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        <TouchableOpacity
-          style={styles.loginBtn}
-          onPress={() => {
-            if (email === "abc" && password === "123") {
-              setLoggedIn(true);
-            } else {
-              alert("Invalid email or password");
-            }
-          }}
-        >
-          <Text style={styles.loginText}>Login</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.footerText}>No account? Sign up (Coming Soon)</Text>
-      </SafeAreaView>
-    );
-  }
-
   // ---------- HOME / CHAT SCREEN ----------
   return (
     <SafeAreaView style={styles.container}>
@@ -275,7 +242,7 @@ export default function App() {
           <Ionicons name="eye-outline" size={22} color="#ffffff" />
           <Text style={styles.appName}>  TriSense</Text>
         </View>
-        <Ionicons name="settings-outline" size={24} color="#ffffff" />
+        
       </View>
 
       {/* AI Audio Chatbot */}
@@ -336,7 +303,7 @@ export default function App() {
       {/* Assistance tools placeholders */}
       <Text style={styles.sectionText}>Assistance Tools</Text>
 
-      <TouchableOpacity style={styles.card}>
+      <TouchableOpacity style={styles.card} onPress={() => router.push("/(tabs)/blind")}>
         <View style={styles.row}>
           <Ionicons name="eye-outline" size={26} color="white" />
           <View style={{ marginLeft: 15 }}>
@@ -347,7 +314,7 @@ export default function App() {
         <Ionicons name="chevron-forward" size={24} color="#ffffff" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.card}>
+      <TouchableOpacity style={styles.card} onPress={() => router.push("/(tabs)/hearing")}>
         <View style={styles.row}>
           <Ionicons name="ear-outline" size={26} color="white" />
           <View style={{ marginLeft: 15 }}>
@@ -358,7 +325,7 @@ export default function App() {
         <Ionicons name="chevron-forward" size={24} color="#ffffff" />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.card}>
+      <TouchableOpacity style={styles.card} onPress={() => router.push("/(tabs)/cognitive")}>
         <View style={styles.row}>
           <MaterialCommunityIcons name="brain" size={26} color="white" />
           <View style={{ marginLeft: 15 }}>
@@ -376,56 +343,9 @@ export default function App() {
 
 /* ---------------- STYLES (your original, reused) ---------------- */
 const styles = StyleSheet.create({
-  loginContainer: {
-    flex: 1,
-    backgroundColor: "#04070F",
-    justifyContent: "center",
-    paddingHorizontal: 30,
-  },
-  loginTitle: {
-    fontSize: 30,
-    fontWeight: "700",
-    color: "#fff",
-    textAlign: "center",
-    marginBottom: 6,
-  },
-  loginSub: {
-    fontSize: 15,
-    color: "#9aa8c7",
-    textAlign: "center",
-    marginBottom: 25,
-  },
-  input: {
-    backgroundColor: "#0B1220",
-    color: "white",
-    padding: 14,
-    borderRadius: 10,
-    marginBottom: 12,
-    fontSize: 15,
-    borderWidth: 1,
-    borderColor: "#1f2a3b",
-  },
-  loginBtn: {
-    backgroundColor: "#3872F3",
-    paddingVertical: 12,
-    borderRadius: 10,
-    marginTop: 6,
-  },
-  loginText: {
-    color: "white",
-    fontSize: 17,
-    fontWeight: "700",
-    textAlign: "center",
-  },
-  footerText: {
-    color: "#7d8ca1",
-    fontSize: 13,
-    textAlign: "center",
-    marginTop: 14,
-  },
   container: { flex: 1, backgroundColor: "#04070F", paddingHorizontal: 18 },
   header: {
-    marginTop: 15,
+    marginTop: 35,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

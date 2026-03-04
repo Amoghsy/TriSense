@@ -9,10 +9,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
 // ⭐ GEMINI CONFIG
-const GEMINI_KEY =  process.env.GEMINI_API_KEY; // <-- put your key here
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
+const GEMINI_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY; // <-- put your key here
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
 
 type Task = { label: string; done: boolean };
 
@@ -468,7 +467,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingHorizontal: 18,
-    paddingTop: 20,
+    paddingTop: 40,
     paddingBottom: 40,
   },
   header: {

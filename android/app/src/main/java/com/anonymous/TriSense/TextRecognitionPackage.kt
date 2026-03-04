@@ -1,21 +1,16 @@
 package com.anonymous.TriSense
 
-import com.facebook.react.*
+import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.*
 import com.facebook.react.uimanager.ViewManager
 
-class SpeechPackage : ReactPackage {
+class TextRecognitionPackage : ReactPackage {
 
     override fun createNativeModules(
         reactContext: ReactApplicationContext
     ): List<NativeModule> {
 
-        return listOf(
-            SpeechModule(reactContext),          // STT
-            TTSModule(reactContext),             // TTS
-            AppLauncher(reactContext),           // App Launcher
-            ObjectDetectionModule(reactContext)  // Obstacle Detection
-        )
+        return listOf(TextRecognitionModule(reactContext))
     }
 
     override fun createViewManagers(
