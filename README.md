@@ -1,50 +1,97 @@
-# Welcome to your Expo app 👋
+# 🚀 TriSense – AI-Powered Accessibility Assistant
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+TriSense is an AI-driven accessibility application designed to empower individuals with **visual, hearing, and cognitive disabilities** by converting complex digital information into accessible, easy-to-understand formats.
 
-## Get started
+The platform integrates **three intelligent assistance modules**, powered by **Android Native Speech-to-Text** and **Gemini AI**, delivering real-time accessibility support in education, communication, and daily tasks.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## ⭐ Features Overview
 
-2. Start the app
+### 🔵 Blind Assistance
+- Text-to-speech reading for PDFs, images, and documents  
+- Image-to-description AI vision  
+- Scene and object explanation  
 
-   ```bash
-   npx expo start
-   ```
+### 🟢 Hearing Assistance
+- Real-time speech‑to‑text captions  
+- Powered by **Native Android STT** (low latency, offline-capable)  
+- Partial + final transcript streaming  
 
-In the output, you'll find options to open the app in a
+### 🟣 Cognitive Assistance
+- Text simplification  
+- Summarization  
+- Task breakdowns / step-by-step guides  
+- Routine & reminder assistance  
+- Powered by **Gemini 2.5 Flash API**  
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🎯 Why TriSense?
 
-## Get a fresh project
+Millions struggle with:
+- Expensive assistive tools  
+- Poor accessibility in digital platforms  
+- Difficult-to-understand text  
+- Lack of real-time audio transcription  
 
-When you're ready, run:
+TriSense creates a **unified accessibility tool**, reducing dependency on multiple apps and delivering:
+- 🔹 Digital independence  
+- 🔹 Better communication  
+- 🔹 Enhanced learning  
+- 🔹 More confidence in navigating daily life  
 
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|------|------------|
+| Frontend | React Native + Expo |
+| AI | Gemini 2.5 Flash |
+| Hearing Assistance | Native Android SpeechRecognizer (Kotlin) |
+| Build System | Yarn |
+| Routing | Expo Router |
+| OS Support | Android (iOS coming soon) |
+
+---
+
+## 📦 Installation (Yarn)
+
+### 1️⃣ Install dependencies
 ```bash
-npm run reset-project
+yarn install
+
+2️⃣ Start development server
+yarn expo start
+
+3️⃣ Run on Android device or emulator
+yarn expo run:android
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
+## 🔧 Android Native Module (SpeechModule)
+TriSense includes a custom Kotlin SpeechRecognizer module for:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+1. Partial live transcription
 
-## Join the community
+2. Final transcription
 
-Join our community of developers creating universal apps.
+3. Error codes
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+4. Real-time microphone state
+
+## Make sure your AndroidManifest.xml contains:
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+## 🔑 Environment Variables
+Create .env in your project root:
+GEMINI_API_KEY=your_api_key_here
+
+🤝 Contributing
+Contributions are welcome!
+Feel free to fork the repo and make a pull request.
+
+📜 License
+MIT License © 2025  Amogh S Y 
